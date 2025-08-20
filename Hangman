@@ -1,0 +1,107 @@
+import tkinter as tk
+import random
+from tkinter import messagebox
+
+# -------------------
+# Word Categories
+# -------------------
+categories = {
+    "Movies": ["INCEPTION", "AVATAR", "GLADIATOR", "TITANIC", "JOKER"],
+    "Fruits": ["APPLE", "BANANA", "MANGO", "ORANGE", "PAPAYA"],
+    "Animals": ["ELEPHANT", "TIGER", "KANGAROO", "GIRAFFE", "ZEBRA"]
+}
+
+# Pick random category and word
+category = random.choice(list(categories.keys()))
+word = random.choice(categories[category])
+guessed = ["_" for _ in word]
+attempts_left = 6
+
+# -------------------
+# Tkinter Setup
+# -------------------
+root = tk.Tk()
+root.title("Hangman Game - Level 2")
+root.geometry("600x500")
+root.config(bg="#1c1c3c")
+
+# -------------------
+# UI Elements
+# -------------------
+title_label = tk.Label(root, text="🎮 Hangman Game", font=("Arial", 20, "bold"), fg="white", bg="#1c1c3c")
+title_label.pack(pady=10)
+
+category_label = tk.Label(root, text=f"Category: {category}", font=("Arial", 14), fg="yellow", bg="#1c1c3c")
+category_label.pack()
+
+word_label = tk.Label(root, text=" ".join(guessed), font=("Arial", 24, "bold"), fg="cyan", bg="#1c1c3c")
+word_label.pack(pady=20)
+
+status_label = tk.Label(root, text=f"Attempts Left: {attempts_left}", font=("Arial", 14), fg="orange", bg="#1c1c3c")
+status_label.pack(pady=10)
+
+# -------------------
+# Game Logic
+# -------------------
+def guess_letter(letter, btn):
+    global attempts_left
+    btn.config(state="disabled")  # disable button after use
+    
+    if letter in word:
+        for i in range(len(word)):
+            if word[i] == letter:
+                guessed[i] = letter
+        word_label.config(text=" ".join(guessed))
+    else:
+        attempts_left -= 1
+        status_label.config(text=f"Attempts Left: {attempts_left}")
+    
+    check_game_over()
+
+def check_game_over():
+    global attempts_left
+    if "_" not in guessed:
+        messagebox.showinfo("🎉 Winner!", f"You guessed it! The word was {word}")
+        play_again()
+    elif attempts_left <= 0:
+        messagebox.showerror("☠ Game Over", f"You lost! The word was {word}")
+        play_again()
+
+def play_again():
+    ans = messagebox.askyesno("Play Again?", "Do you want to play again?")
+    if ans:
+        root.destroy()
+        main()  # restart
+    else:
+        root.quit()
+
+# -------------------
+# Alphabet Buttons
+# -------------------
+frame = tk.Frame(root, bg="#1c1c3c")
+frame.pack(pady=20)
+
+alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+row, col = 0, 0
+for letter in alphabet:
+    btn = tk.Button(frame, text=letter, width=5, height=2, 
+                    font=("Arial", 12, "bold"), 
+                    command=lambda l=letter, b=None: guess_letter(l, buttons[l]))
+    btn.grid(row=row, column=col, padx=5, pady=5)
+    if col == 8:
+        row += 1
+        col = 0
+    else:
+        col += 1
+    if 'buttons' not in locals():
+        buttons = {}
+    buttons[letter] = btn
+
+# -------------------
+# Start Game
+# -------------------
+def main():
+    root.mainloop()
+
+if __name__ == "__main__":
+    main()
