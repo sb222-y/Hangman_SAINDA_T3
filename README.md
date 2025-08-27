@@ -34,7 +34,7 @@ A simple and fun Hangman game built with Python's Tkinter library. This version 
 ### Steps
 
 1. Clone this repository:
-   git clone https://github.com/yourusername/hangman-level2.git
+   git clone https://github.com/sb222-y/hangman-level2.git
    cd hangman-level2
 
 2. Run the game:
